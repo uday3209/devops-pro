@@ -1,0 +1,26 @@
+:: yum install docker*
+
+:: docker ps
+
+:: systemctl start docker
+
+:: systemctl enable docker
+
+:: docker info
+
+:: docker ps
+
+:: Creating a container for jenkins
+-- docker run -itd --name <Name_of_container> -p 8080:8080 jenkins/jenkins
+
+:: docker ps -a
+
+:: docker exec -it <container_id> /bin/bash
+
+:: after we logged into 
+-- <public ip-address>:8080
+-- copy the directoryy
+
+:: cat <paste_directory>
+
+:: copy the password and paste it in browser login page
