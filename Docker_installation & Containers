@@ -1,5 +1,7 @@
 :: yum install docker*
 
+:: docker pull jenkins/jenkins
+
 :: docker ps
 
 :: systemctl start docker
