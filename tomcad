@@ -1,0 +1,45 @@
+==>> ec-2 Apache
+
+wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.106/bin/apache-tomcat-9.0.106.tar.gz
+
+tar -zvxf apache-tomcat-9.0.55.tar.gz
+
+cd apache-tomcat-9.0.55
+
+cd bin
+
+chmod +x startup.sh
+chmod +x shutdown.sh
+
+cd apache-tomcat-9.0.55
+
+find -name context.xml
+
+./conf/context.xml
+./webapps/examples/META-INF/context.xml
+./webapps/host-manager/META-INF/context.xml
+./webapps/manager/META-INF/context.xml
+
+#comment value tag sections in below all files ( <!-- --> )
+  vi ./webapps/examples/META-INF/context.xml
+  vi ./webapps/host-manager/META-INF/context.xml
+  vi ./webapps/manager/META-INF/context.xml
+
+
+cd apache-tomcat-9.0.55
+
+cd conf
+
+vi tomcat-users.xml
+
+#Add below lines between <tomcat-users> tag
+
+<role rolename="manager-gui"/>
+<role rolename="manager-script"/>
+<role rolename="manager-jmx"/>
+<role rolename="manager-status"/>   
+<user username="admin" password="admin" roles="manager-gui,manager-script,manager-jmx,manager-status"/>
+<user username="deployer" password="deployer" roles="manager-script"/>
+<user username="tomcat" password="s3cret" roles="manager-gui"/>
+
+http://server_ip:8080/
