@@ -24,3 +24,11 @@
 
 :: You can check the status of the Jenkins service using the command
 --- systemctl status jenkins
+
+:: <public-ip>:8080
+
+:: cat /var/lib/jenkins/secrets/initialAdminPassword
+
+::install suggested pluggins
+
+::
