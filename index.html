@@ -1,2 +1,675 @@
- Created a repo in developer file
-worst
+LiNUX
+to add user not as root :- user/bin/useradd/user/bin/passwd paste this in vim /etc/sudoers 
+ques.Create the following users,groups and group membership
+-A group named sysadm
+-A user "harry" who belongs to sysadm as a secondary group.
+-A user "natasha" who belongs to sysadm as a secondary group.
+-A user "sarah" who does not have the access to an interactive shell and who is not a member of sysadm group.
+-"harry" "natasha"  and "sarah" should all have password of password 
+SOl:-
+cat /etc/group
+groupadd sysadm
+cat /etc/group/ -i sysadm
+useradd harry
+passwd harry same for natasha and sarah
+usermod -G sysadm harry
+usermod -G sysadm natasha
+usermod -s /sbin/nologin sarah
+cat /etc/passwd | grep -i sarah
+####################################################################################################################
+ques.create a collabrative directory /shared/sysadm with th following characteristics:
+-Group owernship of /shared/sysadm is sysadm
+-The directory should be readable , writable and accesiable to member of sysadm . but not to any other user.
+-Files created in /shared/sysadm automatically have group owernshipset to the sysadm group
+sol:-
+mkdir -p /shared/sysadm
+ll -d /shared/sysadm
+chgrp sysadm /shared/sysadm
+ll -d /shared/syadm
+chmod 770 /shared/sysadm
+ll -d /shared/syadm
+chmod g+s /shared/sysadm
+su -harry
+cd /shared/sysadm
+ll touch harry-file
+##########################################################################################################################
+TOMCAT-SERVER
+* first 3 instances dev-server , jenkins-server , web-server , tomcat-server
+dev-server = t2.micro , size = 12
+jenkins-server = t2.medium , size = 8
+tomcat-server = t2,micro , size = 10
+ON DEV-SERVER 
+sudo su -
+set hostname - dev-server.example.com
+bash
+yum install git 
+CREATE A PUBLIC REPO AND CLONE
+ 1  yum install git
+    3  git clone git@github.com:sanjayguruji/web-repo.git
+    4  git clone https://github.com/sanjayguruji/web-repo.git
+    5  ssh-keygen
+    6  cd .ssh/
+    7  cat id_rsa.pub (add the ssh key to the github)
+    8  cd
+    9  cd web-repo
+   10  git init
+   11  git add .
+   12  git commit -m devops -a
+   13  git branch -M main
+   14  git remote add origin git@github.com:mansi-lti/tomcat.git
+   15  git remote remove origin
+   16  git remote add origin git@github.com:mansi-lti/tomcat.git
+   17  git push origin main
+CONNECT TO JENKINS SERVER
+sudo su -
+hostname
+bash
+ wget -O /etc/yum.repos.d/jenkins.repo     https://pkg.jenkins.io/redhat-stable/jenkins.repo
+    2  rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+    3  yum upgrade
+    4  yum install java-17-amazon-corretto -y
+    5  yum install jenkins -y
+    6  systemctl enable jenkins
+    7  systemctl start jenkins
+    8  systemctl status jenkins
+go to the browser and copy ip-address:8080 and create webhook
+after sign in install plugins like maven , deploy to container , github integration then restart the jenkins
+yum install maven
+CONNECT TO APACHE SERVER
+sudo su -
+hostname = apache.example.com
+bash
+yum install java*
+from google copy the link for tomcat 9 download select tar.gz file
+ yum install wget
+ wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.106/bin/apache-tomcat-9.0.106.tar.gz
+ tar -xzf apache-tomcat-9.0.106.tar.gz
+ ll
+move to jenkins server 
+mvn -v (copy the maven home path and java path and paste in the jenkins web server under tools)
+next create new item and start the build if not coming install git on jenkins server
+next move to apache server 
+ cd  apache-tomcat-9.0.106
+ cd bin
+  ll
+  chmod +x startup.sh
+  chmod =x shutdown.sh
+  chmod +x shutdown.sh
+open the medium and follow the steps
+after runnig the ./startup copy the ip address with port no 8080
+login manager app username and pass admin 
+then the configuration part and create credentials with username depolyer and pass depolyer
+add container
+make changes from github and check wheather the changes are reflecting or not
+####################################################################################################
+Docker_installation & Containers
+:: yum install docker*
+
+:: docker pull jenkins/jenkins
+
+:: docker ps
+
+:: systemctl start docker
+
+:: systemctl enable docker
+
+:: docker info
+
+:: docker ps
+
+:: Creating a container for jenkins
+-- docker run -itd --name <Name_of_container> -p 8080:8080 jenkins/jenkins
+
+:: docker ps -a
+
+:: docker exec -it <container_id> /bin/bash
+
+:: after we logged into 
+-- <public ip-address>:8080
+-- copy the directoryy
+
+:: cat <paste_directory>
+
+:: copy the password and paste it in browser login page
+###################################################################################################
+jenkins_on_aws
+:: up to date on your instance by using
+--- yum update –y
+
+:: Add the Jenkins repo using the following command
+--- wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+
+:: Import a key file from Jenkins-CI to enable installation from the package
+--- rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+--- yum upgrade
+
+:: Install Java
+--- yum install java-17-amazon-corretto -y
+
+:: Install Jenkins
+--- yum install jenkins -y
+
+:: Enable the Jenkins service to start at boot
+--- systemctl enable jenkins
+
+:: Start Jenkins as a service
+--- systemctl start jenkins
+
+
+:: You can check the status of the Jenkins service using the command
+--- systemctl status jenkins
+#############################################################################################
+GIT CLIENT1 , CLIENT2 , SERVER
+first create 3 instances
+sudo su -
+sethostname
+ hostname
+ ip a s
+ vim /etc/hosts
+ cat /etc/hosts
+  history
+create a directory and do git init --bare in server and in client do git --init
+in the server
+cd 
+make the changes in vim /etc/ssh/sshd_config
+git server, client1 , client2
+#########
+git-server
+##########
+sudo su -
+passwd root
+yum install git
+hostnamectl set-hostname git-server.example.com
+bash
+vim /etc/hosts
+ping
+vim /etc/ssh/sshd_config    (remove # for "permit root login" and change value to yes and  PasswordAuthentication ,PermitEmptyPasswords to yes)
+systemctl restart sshd
+systemctl start sshd
+cd project
+git init --bare
+git log
+
+###########
+git-client1
+###########
+sudo su -
+hostnamectl set-hostname git-client.example.com
+bash
+yum install git
+ssh-keygen
+ssh-copy-id root@172.31.35.8
+vim /etc/hosts
+ping
+mkdir my-project
+cd my-project
+git init
+vim index.html
+git add .
+git commit -m "first"
+git remote add origin root@172.31.35.8:/root/project/
+git push -u origin master
+########################################################################################################################
+AWS
+1st scenario) USING HTTPD
+create a instance-> web server -> t2.micro -> connect
+    sudo su -
+    2  yum install httpd -y
+    3  cd /var/www/html/
+    4  echo "this is my web server" > index.html
+    5  ll
+    7  cat index.html
+    9  systemctl start httpd
+   10  systemctl enable httpd
+   11  systemctl status httpd
+enable the port no 8080 and paste the public ip address in the browser for the output.
+#########################################################################################################################
+2nd) using the advance option 
+create a instace -> my-server -> t2.micro -> in the advance give the follwing script
+       #!/bin/bash
+       yum install httpd -y
+       echo "this message is created during the instace creation from the advance option" >> /var/www/html/index.html
+       system start httpd
+       system enable httpd
+       useradd mansi -p redhat -c "user mansi created" 
+copy the public ip and paste in the browser the message will the displayed 
+then check in the terminal the file index.html is reflected or not
+    sudo su -
+ 1  cd /var/www/html
+    2  ll
+    3  cat index.html
+    4  cd
+    5  tail /etc/passwd
+    6  tail /etc/shadow
+====================================================================================================================
+3) creating custom AMI
+create two instances in one instace download all the packages 
+then create another instance using the custom AMI and check wheather all the packages are available in the new instance or not
+ 8  yum install docker *
+   10  yum install vsftpd -y
+   11  yum install dns*
+   12  yum install nfs-utils -y
+   13  yum install cifs-utils -y
+   16  touch mansi.html
+   17  vim mansi.html
+Creting the custom ami -> Actions-> Image and AMI -> Create Image
+name :- devops-practise-ami
+des:
+tag:- tag image and snapshot together -> create image
+click in the AMi ctalog -> check in my AMI's
+terminate the my-server instance
+create new instance with the custom ami and check the packages install using
+rpmquery docker , httpd, dns , cifs-utils , nfs-utils
+ 1  ll
+    2  rpmquery docker
+    3  rpmquery httpd
+    4  rpmquery dns
+    5  rpmquery cifs-utils
+    7  rpmquery nfs-utils
+    8  history
+=======================================================================================================================
+4) copying ami from one region to another
+AMI -> copy AMI -> Destination = ohio -> copy AMI
+select ohio region
+create a instance in ohio region from the custom ami
+create new key pair
+create security group
+allow port no 22 , http
+launch instance
+paste the public ip in the browser
+terminate
+======================================================================================================================
+5) to share from one account to another
+AMI -> provide AMI-ID of the different account -> save chages
+path :- ec2 -> AMI -> ami-0000------- -> edit AMI permission
+action -> copy ami -> transfer to N.Vir -> copy ami
+==================================================================================================================
+6) how to create AMI from snapshot
+select the existing AMI snapshot-> actions -> create image from the snapshot
+name :
+des:
+create instance 
+deregister 
+===============================================================================================================
+7) Templates
+launch template -> create template
+name : 
+des:
+template tahs 
+name : devops 
+give all the details like image etc 
+add the script file in the advance details 
+creating a instance:- dashboard -> launch instances from template -> paste the ip in terminal
+==============================================================================================================
+STORAGE
+ESD
+1) create instance 
+name: dev-server
+check for the root , root name and volume id from the storage 
+connect 
+#sudo su -
+#df -h
+attach the volume: EBS-> volume-> add the "root tag" for the existing volume -> create volume 
+type : gp2
+size : 5
+zone : us-east-1a
+create volume
+select the vol -> actions -> attach volume
+ 1  df -h
+    2  lsblk
+    3  lsblk -fs
+    4  blkid
+       mkfs press tab 2 times
+    5  mkfs.ext4 /dev/xvdb
+    6  blkid
+    7  mkdir data
+    8  mount /dev/xvdb data
+    9  df -h
+   10  cd data
+   11  touch mansi.xt{1..10}
+   12  ll
+restart instance -> connect again
+sudo su -
+cd data 
+ll (data will be goned)
+for permanent mounting 
+blkid -> copy the UID 
+vim /etc/fstab
+add the following connect 
+#mydisk
+UUId = copied id /data ext4 defaults 0 0
+#systemctl daemon-reload
+df -h 
+restart the instance
+connect again
+sudo su -
+df -h
+cd data
+ll
+=====================================================================================================
+2) data replication
+create instance - test-server 
+create a snapshot for the data-vol
+source :- volume
+name :- data-vol 
+des : this is a data-vol snap -> create snapshot 
+actions -> create volume from the snap , 5g , us-east-1a
+attach the volume
+connect to the test-server
+sudo su -
+lsblk
+mkir test
+mount /dev/xvbd test (if does not work use : mkfs.ext4 /dev/sdb)
+df -h
+cd test
+blkid
+df -h
+========================================================================================
+how to increase the disk space
+select the new-data-vol and size = 8
+df -f
+blkid
+lsblk
+===========================================================================================
+how to resize
+resize2fs /dev/xvdb
+df -h
+cd /test
+================================================================================
+how to resize the root volume
+from dashboard increase the size of the root-vol to 15g
+lsblk
+growpart /dev/xvda 1
+lsblk 
+df -h
+reboot the test server
+=========================================================================================
+EBS 
+Volumes for different regions
+create a instance - dev-server
+assign tag to the root volume
+create a new volume
+size : 5g
+region : us-east-1a
+tag: data-vol
+attach volume -> device : /dev/sdb
+connect instance
+    #sudo su -
+    lsblk
+    2  mkfs.ext4 /dev/sdb
+    3  mkdir data
+    4  mount /dev/xvdb data
+    5  df -h
+    6  cd data
+    7  touch devops.txt{1..10}
+    8  ll
+    9  history
+create a duplicte session
+select ohio region and create a new instance(test-server)
+create a snapshot for the data-vol in (N.virgina) -> copy the snapshot -> destination = us-east-2
+check in ohio region under snapshot 
+select the snapshot -> create volume from snapshot -> name : new-data-vol -> attach 
+connect ohio 
+ 1  lsblk
+    2  mkdir data1
+    3  mount /dev/xvdb data1
+    4  df -h
+    5  cd /root/data1
+    6  ll
+    7  cd
+    8  umount data1
+    9  ll
+=========================================================================================
+EFS
+create 3 instances
+server1 - amazon linux , 1a 
+server2 - redhat , 1a
+server3 - ubuntu , 1b
+connect 3 servers
+create efs -> create file system 
+name : my-efs
+vpc : default
+connect the 3 servers and install nfs-utils on 3 servers 
+linux and redhat
+sudo su -
+yum install nfs-utils -y
+ubuntu 
+sudo su -
+apt-get update 
+apt install nfs-common
+server-1 and server 2
+#systemctl restart nfs-server.service
+#systemctl enable nfs-server.service
+server-3
+#systemctl status nfs-common.service
+allow nfs port on 3 servers (2049)
+create a new security group 
+name : efs1-sg 
+in inbound ruls allow nfs port 
+change the security group fof 1a , 1b regions
+path : efs < file system < my-efs< network < change from default to efs1-sg
+my-efs < manage < attach < mount via ip < copy the command for mounting 
+server 1
+#mkdir efs 
+#paste the code
+#df -h
+#cd /root/efs
+#touch devops.txt{1..10}
+server 2
+#mkdir remote 
+pate the code-----------/remote
+df -h
+cd /root/remote
+ll
+servr 3
+#mkdir devops
+#paste the code----------/devops
+#cd /root/devops 
+#ll
+#touch mansi.txt{1..5}
+check in 3 servers wheathe reflected or not
+create a new instance in 1c subnet
+connect
+#sudo su -
+#mkdir mansi
+#pastse the mount code..../mansi
+#df -h
+#cd /root/mansi
+#ll
+=================================================================================================================
+S3
+website hosting
+crate a bucket "website- hosting"
+upload all the website files
+go to properties < enable static website hosting
+select all the files from the bucket and  change permission
+actions < make public
+copy the url and paste
+===============================================================================================================
+IAM USER
+create a user
+name: mansi-admin
+policies : attach policies directly
+permissions : search amazons3fullaccess -> create user
+select user -> security credentials -> create access key -> download
+create a instance -> dev-server , size : 10 -> connect
+#sudo su -
+#yum update -y
+#curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+#aws --version
+#aws configure
+access key : 
+secert : 
+region : us-east-1
+format : table
+#ll
+#cd .aws/
+#ls
+#cat config
+#cat credentials
+#sudo yum install automake fuse fuse-devel gcc-c++ git libcurl-devel libxml2-devel make openssl-devel
+#git clone https://github.com/s3fs-fuse/s3fs-fuse.git
+#ll
+#cd s3fs-fuse
+#./autogen.sh
+#./configure --prefix=/usr --with-openssl
+#sudo make install
+#make
+#which s3fs
+#touch /etc/passwd-s3fs
+#vim /etc/passwd-s3fs (add acces key: secret)
+#sudo chmod 640 /etc/passwd-s3fs
+#cd
+# s3fs sanjaynn /mnt -o passwd_file=/etc/passwd-s3fs replace (sanjaynn with uh r bucket name)
+# df -h
+#cd /mnt
+#touch mansi.txt{1..5}
+#ll
+website files are displayed in the terminal and also in the bucket 
+===========================================================================================
+VPC
+create a vpc :-devops-vpc
+name : devops-vpc 
+vpc only 
+ipvr cidr : 10.0.0.0/16
+create a internet gateway name : devops-igw
+create public-subet select devops-vpc
+name : public-subnet
+zone : us-east-1a
+vpc cidr : 10.0.0.0/16
+subnet cidr : 10.0.0.0/24
+create private-subnet
+name : private-subnet
+zone : 1b
+vpc cidr : 10.0.0.0/16
+subnet cidr : 10.0.1.0/25
+attach the vpc to internet gateway path: internet gateway < select devops igw < actions < attach to vpc
+create a public-rt
+edit routes < add internet gatway
+associate public-subnet with public-rt from edit subnet associations
+create private-rt and associate with private-subnet
+create a public-server instance 
+vpc : devops-vpc
+subnet : public-subnet
+auto-assign public ip : enable
+sg : create -> public sg -> enable the port http and all icmp ipv4
+connect
+#yum install httpd -y
+#cd /var/www/html
+#echo "this is aws server" > index.html
+#ll
+#systemctl restart httpd
+#systemctl enable httpd
+#systemctl status httpd
+copy the public ip and paste it in browser
+create private-server instance
+name : private-server
+vpc : devops-vpc
+subent: private-subnet
+auto-asign public ip : disable
+sg : select existing -> public-sg
+#vim lti-mahape-key.pem
+paste the private key content
+#chmod 400 lti-mahape-key.pem
+connect the private-server
+#ping google.com (it will not work)
+create NAT gateway 
+name : devops-ngw
+subnet : public-subnet
+elastic ip : allocate 
+edit private-rt and add NAT-gateway -> save changes
+#ping google.com (it should work)
+====================================================================================================================
+******Using 2 vpc sending data from one region to another*******
+N.Virgina
+Create vpc :- dev-vpc , 10.0.0.0/16
+Igw :- dev-igw , attach igw to vpc
+subnet :- public-subnet , 1a , 10.0.0.0/16 , 10.0.0.0/24
+          private-subnet , 1b , 10.0.0.0/16, 10.0.1.0/24
+route table :- public-rt , dev-vpc
+edit routes :- 0.0.0-- , igw , save changes
+route table :- private-rt , dev-vpc 
+associate subnets
+create instance :- public-server , lti keuy , dev-vpc , public-subnet , create sg , add http , icmp
+create instance :- private-server , dev-vpc , private-subnet , disabled , existing sg
+connect 
+#sudo su -
+#yum install httpd -y
+#cd /var/www/html
+#echo "this is web server" > index.html
+#ll
+#systemctl restart httpd
+#systemctl enable httpd
+paste public ip of ng instance
+#cd
+copy private-server ip add
+#ping ip_add
+----------ohio-region----------
+create vpc :- AI-project , 20.0.0.0/16
+igw - AI-project-igw , attach to vpc 
+subnet :- web-subnet , 2a , 20.0.0.0/24
+          db-subnet , 2b, 20.0.1.0/24
+route table :- web-rt , AI-project,   
+edit routes :- igw
+associate subnets
+route table :- db-rt 
+instances :- create :- web-server , sg(web-sg)(new) , allow icmp , http
+create : db-server 
+connect
+#sudo su -
+#yum install httpd -y
+#ping ip_add (private ip of db_Server)
+#passwd root 
+#vim /etc/ssh/sshd_config (edit permintrootpassword , passwordauthentication -> yes)
+systemctl restart sshd
+systemctl enable sshd
+do these changes in the both machines
+create files on the both the machines 
+cat > devops.txt provide some content in that (similary do it in N.virgina region)
+create peering connections 
+name : dev-to-ai
+vpc : dev-pc
+another region 
+us-east-2
+vcpid (copy vpc id from the ohio region)
+in ohio accept request -> under peering connections 
+--------ohio-region----------------
+route table :- web-rt 
+edit :- add (10.0.0.0/16)  peering connection
+--------N.V------------
+route table :- private
+edit :- add(20.0.0.0/16) peering connection 
+------ohio terminal----------
+scp devops.txt root@public-ip-(nv-region-termial):/tmp
+------nv terminal----------
+cd /tmp
+ll
+vice-versa (optional)
+=====================================================================================================
+MFA 
+first login to aws account -> security credentials -> mfa device
+give mfa device name -> scane using authentictor app -> provide two codes that comes in authenticator app 
+you can also disable it uh will see a option to remove 
+================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
