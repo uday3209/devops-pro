@@ -1,5 +1,7 @@
 ==>> ec-2 Apache
 
+install java
+
 wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.106/bin/apache-tomcat-9.0.106.tar.gz
 
 tar -zvxf apache-tomcat-9.0.55.tar.gz
