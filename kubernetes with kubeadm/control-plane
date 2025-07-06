@@ -99,6 +99,15 @@ systemctl restart ssh
 systemctl enable ssh
 ssh-keygen
 cd .ssh
-vim authorized_keys :: paste the public key of local
+vim authorized_keys :: paste the public key of local in control-plane
+
 cd
+-->> send file from control-plane to local host
 scp /etc/kubernetes/admin.conf root@<local-ip>:/root/.kube
+
+==>> in local host
+ssh root@<ip-control-plane>
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+
+
