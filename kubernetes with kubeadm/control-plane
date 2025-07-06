@@ -1,4 +1,6 @@
-	"" Control Panel ""
+>> We can also use cri-o refer to sanjaya-k8s-code/new-K8S-ins-code
+
+"" Control Panel ""
 -- create ec2 instance with ubuntu os, t2.medium
 sg should be allowed with all the ports in official doc 
 
@@ -53,11 +55,19 @@ mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
 
+===> Assign role of workerNodes as worker
+kubectl label node <NODE-NAME> node-role.kubernetes.io/worker=true
+
+===> To remove assigned role
+kubectl label node <NODE-NAME> node-role.kubernetes.io/worker-
 
 ===>   Creating Pod
 curl https://raw.githubusercontent.com/projectcalico/calico/v3.29.2/manifests/calico.yaml -O
 kubectl apply -f calico.yaml
 kubectl get pod -A
+<<-- Calico is a widely used CNI (Container Network Interface) plugin that provides networking and network policy enforcement for Kubernetes clusters.  -->>
+
+<<-- Creating a pod -->>
 mkdir /project-k8s/
 cd /project-k8s/
 vim pod.yaml
@@ -78,6 +88,7 @@ spec:
 cd
 kubectl apply -f pod.yaml
 kubectl get pods -o wide
+kubectl describe pod <pod-name>
 kubectl get nodes
 
 
