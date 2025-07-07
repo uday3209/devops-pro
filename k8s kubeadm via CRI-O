@@ -79,6 +79,14 @@ sudo systemctl start kubelet
 ## Execute ONLY on "Master Node"
 
 
+sudo apt update
+sudo apt install containerd -y
+
+
+sudo systemctl enable containerd
+sudo systemctl start containerd
+
+
 sudo kubeadm config images pull
 
 sudo kubeadm init
