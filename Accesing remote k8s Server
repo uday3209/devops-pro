@@ -1,0 +1,48 @@
+	<--- ACCESSING REMOTE KUBEADM k8s CLUSTER FROM LOCAL SERVER --->
+-- create ec2 instance with ubuntu os, t2.micro
+
+
+sudo su -
+apt-get install -y openssh-server
+vim /etc/ssh/sshd_config 
+systemctl restart ssh
+systemctl enable ssh
+ssh-keygen
+cd .ssh
+
+Note:: Generate SSH key in control plane
+
+vim authorized_keys :: paste the public key of control panel
+cd
+passwd root
+ip a s
+mkdir .kube
+
+### Execute this command in control panel
+scp /etc/kubernetes/admin.conf root@172.31.90.182:/root/.kube
+
+
+cd .kube :: file sent from control panel is visible here admin.conf
+
+-- Installing tools
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+kubectl version --client
+
+-- update kubectl configuration
+export KUBECONFIG=~/.kube/admin.conf
+kubectl get nodes
+
+
+
+
+
+
+
+
+
+https://kubernetes.io/docs/concepts/workloads/pods/
+https://k21academy.com/docker-kubernetes/accessing-remote-kubeadm-cluster/
+https://github.com/sanjayguruji/Sanjaya-K8S-Code/blob/main/k8s-installtion-with-containerd-on-ubuntu%2024.04
