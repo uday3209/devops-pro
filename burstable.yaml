@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: burstable
+
+spec:
+  containers:
+  - name: burstable
+    image: nginx
+    resources:
+      limits:
+        memory: "200Mi"
+      requests:
+        memory: "100Mi"
