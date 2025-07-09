@@ -1,0 +1,53 @@
+---
+- name  : Apache Installation
+  hosts : all
+  tasks :
+
+    - name: install Apache2
+      yum:
+        name: httpd
+        state: present
+
+    - name: start Apache2
+      systemd:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Html File
+      copy:
+        src: index.html
+        dest: /var/www/html/index.html
+
+---
+- name: Adding multiple users
+  hosts: all
+  tasks:
+    - name: Creatig Multiple Users
+      user:
+        name: "{{ item }}"
+        state: present
+
+      loop:
+        - uday
+        - mansi
+        - deepak
+        - hymann
+
+---
+- name: Coping Multiple Files
+  hosts: all
+  tasks:
+    - name: Transfering multiple files
+      copy:
+        src: "{{ item }}"
+        dest: /mnt
+
+      loop:
+        - /etc/passwd
+        - /etc/fstab
+        - /etc/gshadow
+        - /etc/mtab
+        - /etc/group
+      
+  
