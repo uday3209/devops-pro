@@ -1,0 +1,54 @@
+# Create IAM user
+
+<<--- Required Packages --->>
+yum install python
+yum install python-pip
+pip install boto boto3 ansible
+yum install ansible*
+
+<<--- Checking !! --->>
+python --version
+pip --version
+
+<<-- editing worker nodes:: ip  hostname -->>
+vim /etc/hosts
+
+<<-- Send the /etc/hosts files -->>
+scp /etc/hosts wokerNode:/etc/hosts
+
+<<-- SSH key transfer -->>
+cd .ssh
+ssh-copy-id wokernode
+
+cd /etc/ansible/
+vim hosts
+
+[dev-server]
+hostname
+
+vim ec2.yaml
+
+<<-- Provisioning EC2 Instance -->>
+---
+- name: Launch EC2 instance
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Creating EC2 instance via Ansible
+      amazon.aws.ec2_instance:
+        aws_access_key: 
+        aws_secret_key: 
+        instance_type: t2.micro
+        image_id: ami-05ffe3c48a9991133
+        vpc_subnet_id: subnet-002a81559973fe0a1
+        key_name: Milestone-key
+        region: us-east-1
+        count: 1
+        state: present
+        tags:
+          Name: "myServer"
+
+ansible-playbook ec2.yaml --syntax-check
+ansible-playbook ec2.yaml -C
+ansible-playbook ec2.yaml 
