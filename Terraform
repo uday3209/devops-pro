@@ -1,3 +1,6 @@
+https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
+https://registry.terraform.io/
+
 
   <<< --- Terraform Installation --- >>>
 yum install -y yum-utils shadow-utils
@@ -10,34 +13,43 @@ unzip awscliv2.zip
 sudo ./aws/install
 
 mkdir project-x/
+cd project-x/ 
 vim ec2.tf
 
- <<< ----  For EC2 Instance Creation ---- >>>
+<<--- CREATING AN EC-2 INSTANCE IN US-EAST-1A WITH SG GROUP 443 & 22 --->>
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0"
+    }
+  }
+}
+
+# Configure the AWS Provider
 provider "aws" {
   region     = "us-east-1"
   access_key = ""
   secret_key = ""
 }
 
-
 resource "aws_instance" "MyServer" {
-  ami              = "ami-05ffe3c48a9991133"
-  instance_type    = "t2.micro"
-  availability_zone = "us-east-1a"
-  security_groups = ["${aws_security_group.MySg.name}"]
-  # vpc_security_group_ids = [aws_security_group.MySg.id]
+  ami                    = "ami-05ffe3c48a9991133"
+  instance_type          = "t2.micro"
+  security_groups        = [aws_security_group.MySg.name]
+  vpc_security_group_ids = [aws_security_group.MySg.id]
   tags = {
     Name = "Terr-Server.."
   }
-  key_name = "Milestone-key"
-
+  key_name          = "Milestone-key"
+  availability_zone = "us-east-1a"
 }
 
 resource "aws_security_group" "MySg" {
   name        = "MySG"
   description = "Allow inbound rules"
   tags = {
-    Name = "example"
+    Name = "my-SG"
   }
 }
 
@@ -49,6 +61,13 @@ resource "aws_vpc_security_group_ingress_rule" "allow-http" {
   to_port           = 80
 }
 
+resource "aws_vpc_security_group_ingress_rule" "allow-https" {
+  security_group_id = aws_security_group.MySg.id
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 443
+  ip_protocol       = "tcp"
+  to_port           = 443
+}
 
 resource "aws_vpc_security_group_ingress_rule" "allow-ssh" {
   security_group_id = aws_security_group.MySg.id
@@ -58,14 +77,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow-ssh" {
   to_port           = 22
 }
 
-
-resource "aws_vpc_security_group_ingress_rule" "allow-8080" {
-  security_group_id = aws_security_group.MySg.id
-  cidr_ipv4         = "0.0.0.0/0"
-  from_port         = 8080
-  ip_protocol       = "tcp"
-  to_port           = 8080
-}
+  
 
 terraform init
 terraform fmt
